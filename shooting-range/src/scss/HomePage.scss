@@ -1,0 +1,40 @@
+.home-page {
+    height: 100vh;
+    width: 100vw;
+    background-image: url('https://cdn.sanity.io/images/6znhzi10/production/99fa791d81237803677443c8517096b4eef1e130-886x498.jpg?w=736&auto=format');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.main-menu {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 40%;
+    left: 40%;
+
+}
+
+.login-options {
+    display: flex;
+    flex-direction: row;
+    gap: 50px;
+}
+
+.login-button, .create-account-button {
+    text-decoration: none;
+    width: 120px;  
+    height: 40px;  
+    background-color: darkblue;
+    display: flex;
+    justify-content: center;
+    align-items: center;  
+    color: white;
+    border-radius: 10px;  
+    cursor: pointer; 
+}
+
+.login-button:hover, .create-account-button:hover {
+    background-color: lightblue;
+}

@@ -1,0 +1,36 @@
+.userhomepage {
+    height: 100vh;
+    width: 100vw;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    background-image: linear-gradient(rgba(222, 221, 221, 0.377), rgba(222, 221, 221, 0.349)), url('//shared.fastly.steamstatic.com/store_item_assets/steam/apps/2021560/ss_c3a9d602353bf1ee5e84b56888415e7467da3037.1920x1080.jpg?t=1709591687')
+}
+
+.game-menu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: darkblue;
+    top: 25%;
+    left: 34%;
+    position: absolute;
+
+}
+
+.game-menu h1 {
+    margin-bottom: 10px;
+}
+.difficulty-levels {
+    display: flex;
+    gap: 5%;
+}
+
+.highscore-menu {
+    display: flex;
+    flex-direction: column;
+    color: black;
+    font-size: 25px;
+    margin-left: 3%;
+}

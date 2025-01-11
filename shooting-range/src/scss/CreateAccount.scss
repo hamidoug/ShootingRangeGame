@@ -1,0 +1,44 @@
+.create-account-page {
+    height: 100vh;
+    width: 100vw;
+    background-image: linear-gradient(rgba(222, 221, 221, 0.666), rgba(222, 221, 221, 0.666)), url("https://wallpapers.com/images/hd/shooting-1920-x-1080-background-iqt52edpslrfvlmu.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+
+.create-account-success-message {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.create-account-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: darkblue;
+    top: 35%;
+    left: 38%;
+    position: absolute;
+}
+
+.create-account-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+}
+
+.create-account-submit-button {
+    width: 80px;
+    color: darkblue;
+    background-color: white;
+}
+
+.create-account-submit-button:hover {
+    background-color: lightblue;
+    cursor: pointer;
+}
+
