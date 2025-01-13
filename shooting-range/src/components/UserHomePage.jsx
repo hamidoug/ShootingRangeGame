@@ -6,7 +6,27 @@ import { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import "../scss/UserHomePage.scss";
 
+axios.defaults.withCredentials = true;
 
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Set the CSRF token in axios headers globally
+const csrftoken = getCookie('csrftoken');
+console.log("CSRF Token:", csrftoken);
+axios.defaults.headers.common['X-CSRFToken'] = csrftoken;
 
 
 function UserHomePage() {
@@ -16,14 +36,21 @@ const [highScores, setHighScores] = useState({
     hard_high_score: 0,
 });
 useEffect(() => {
-    axios.get('http://127.0.0.1:8000/user_auth/fetchhighscore/', { withCredentials: true })
+    axios.get('http://127.0.0.1:8000/user_auth/fetchhighscore/', {
+        headers: {
+            'X-CSRFToken': csrftoken, 
+        },
+        withCredentials: true, 
+    })
     .then((response) => {
         setHighScores(response.data);
     })
     .catch((error) => {
-        console.error('Error:', error.response?.data || error.message);
+        console.error('Error fetching high scores:', error.response?.data || error.message);
     });
 }, []);
+
+
     return(
 <div className="userhomepage">
     <div className="highscore-menu">

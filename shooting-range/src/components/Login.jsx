@@ -5,6 +5,29 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import "../scss/CreateAccount.scss"
 
+axios.defaults.withCredentials = true;
+
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Set the CSRF token in axios headers globally
+const csrftoken = getCookie('csrftoken');
+console.log("CSRF Token:", csrftoken);
+axios.defaults.headers.common['X-CSRFToken'] = csrftoken;
+
 function Login() {
 
   
@@ -21,6 +44,7 @@ function Login() {
         username: username,
         password: password,
     });
+    // await axios.get('http://127.0.0.1:8000/user_auth/set_csrf/');
       navigate('/userhomepage')
     }
     catch(e){

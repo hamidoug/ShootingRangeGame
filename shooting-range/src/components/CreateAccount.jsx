@@ -6,6 +6,8 @@ import axios from "axios";
 import { useState } from "react";
 import { Navigate } from "react-router-dom";
 
+axios.defaults.withCredentials = true;
+
 
 function CreateAccount() {
   const [username, setUsername] = useState('')

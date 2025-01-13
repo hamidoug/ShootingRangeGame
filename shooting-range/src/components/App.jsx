@@ -6,8 +6,15 @@ import CreateAccount from './CreateAccount';
 import Login from './Login';
 import UserHomePage from './UserHomePage';
 import EasyLevel from './EasyMode';
+import axios from 'axios';
+import { useEffect } from 'react';
 
 function App() {
+//   useEffect(() => {
+//     axios.get('http://127.0.0.1:8000/user_auth/csrf/')
+//         .then(() => console.log("CSRF cookie set"))
+//         .catch(err => console.error("CSRF setup failed", err));
+// }, []);
   return (
     <BrowserRouter>
     <Routes>

@@ -9,20 +9,21 @@ from .models import UserProfile
 from .serializers import UserProfileSerializer
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
-
-
-
 from django.contrib.sessions.models import Session
-
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
-
+from django.views.decorators.csrf import ensure_csrf_cookie
 from django.http import JsonResponse
-
-# def csrf(request):
-#     return JsonResponse({'csrfToken': get_token(request)})
+from django.utils.decorators import method_decorator
 
 
+
+
+
+# @ensure_csrf_cookie
+# def set_csrf_token(request):
+#     return JsonResponse({'message': 'CSRF cookie set'})
+# @method_decorator(csrf_exempt, name='dispatch')    
 class FetchHighScoreView(APIView):
     def get(self, request):
         print(f"FetchHighScoreView - Request user: {request.user}")  # Debug user
@@ -34,73 +35,70 @@ class FetchHighScoreView(APIView):
                 print(f"user is not authenticated")
             profile = UserProfile.objects.get(user=user)
             serialized_data = UserProfileSerializer(profile)
+            print(f"FetchHighScoreView works")
+            print(f"CSRF cookie: {request.headers.get('X-CSRFToken')}")
             return Response(serialized_data.data, status=200)
         except Exception as e:
             return Response({'error': 'An unexpected error occurred', 'details': str(e)}, 
             status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-# @login_required
-# class FetchHighScoreView(APIView):
-#     def get(self, request):
-#         print(f"Session Key: {request.session.session_key}")
-#         print(f"Request Cookies: {request.COOKIES}")
-#         print(f"Request User: {request.user}")
-#         print(f"Is Authenticated: {request.user.is_authenticated}")
-
-#         if not request.user.is_authenticated:
-#             return Response({'error': 'User is not authenticated'}, status=401)
-
-#         profile = UserProfile.objects.get(user=request.user)
-#         serialized_data = UserProfileSerializer(profile)
-#         return Response(serialized_data.data)
 
 
+# @method_decorator(csrf_exempt, name='dispatch')
+# @method_decorator(csrf_exempt, name='dispatch')
+# class UpdateHighScoreView(APIView):
+#     def post(self, request):
+#         print(f"Entered UpdateHighscore View")
+#         print(f"CSRF cookie: {request.headers.get('X-CSRFToken')}")
+#         user = request.user
+#         print(f"Authenticated user: {user}")
+#         if not user.is_authenticated:
+#             return Response({'error': 'User is not authenticated'}, 
+#             status=status.HTTP_401_UNAUTHORIZED)
+#         print(f"AUthenticated user: {user}")
+#         new_score = request.data.get('game_score', 0)
+#         game_difficulty = request.data.get('game_difficulty')
+#         # if not user.is_authenticated:
+#         #     return Response({'error': 'User is not authenticated'}, status=status.HTTP_401_UNAUTHORIZED)
+#         try:
+#             profile = UserProfile.objects.get(user = user)
+
+#             if game_difficulty == "Easy" and new_score > profile.easy_high_score:
+#                 profile.easy_high_score = new_score
+#             elif game_difficulty == "Medium" and new_score > profile.medium_high_score:
+#                 profile.medium_high_score = new_score
+#             elif game_difficulty == "Hard" and new_score > profile.hard_high_score:
+#                 profile.hard_high_score = new_score
+#             profile.save()
+#             return Response({'Success': 'High Score Updated Properly'},
+#             status=status.HTTP_200_OK)
+#         except Exception as e:
+#             return Response({'error': 'An unexpected error occurred', 'details': str(e)}, 
+#             status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 class UpdateHighScoreView(APIView):
-    def post(self, request):
+    def get(self, request):
+        print(f"Entered UpdateHighScore View")
         user = request.user
-        print(f"Authenticated user: {user}")
         if not user.is_authenticated:
-            return Response({'error': 'User is not authenticated'}, 
-            status=status.HTTP_401_UNAUTHORIZED)
-        print(f"AUthenticated user: {user}")
-        new_score = request.data.get('game_score', 0)
-        game_difficulty = request.data.get('game_difficulty')
-        # if not user.is_authenticated:
-        #     return Response({'error': 'User is not authenticated'}, status=status.HTTP_401_UNAUTHORIZED)
-        try:
-            profile = UserProfile.objects.get(user = user)
+            return Response({'error': 'User is not authenticated'}, status=status.HTTP_401_UNAUTHORIZED)
 
-            if game_difficulty == "Easy" and new_score > profile.easy_high_score:
-                profile.easy_high_score = new_score
-            elif game_difficulty == "Medium" and new_score > profile.medium_high_score:
-                profile.medium_high_score = new_score
-            elif game_difficulty == "Hard" and new_score > profile.hard_high_score:
-                profile.hard_high_score = new_score
+        new_score = request.query_params.get('game_score', 0)
+        game_difficulty = request.query_params.get('game_difficulty')
+
+        try:
+            profile = UserProfile.objects.get(user=user)
+
+            if game_difficulty == "Easy" and float(new_score) > profile.easy_high_score:
+                profile.easy_high_score = float(new_score)
+            elif game_difficulty == "Medium" and float(new_score) > profile.medium_high_score:
+                profile.medium_high_score = float(new_score)
+            elif game_difficulty == "Hard" and float(new_score) > profile.hard_high_score:
+                profile.hard_high_score = float(new_score)
+
             profile.save()
-            return Response({'Success': 'High Score Updated Properly'},
-            status=status.HTTP_200_OK)
+            return Response({'success': 'High Score Updated'}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error': 'An unexpected error occurred', 'details': str(e)}, 
-            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-# @login_required
-# class LoginView(APIView):
-#     def post(self, request):
-#         username = request.data.get('username')
-#         password = request.data.get('password')
-
-#         user = authenticate(username=username, password=password)
-#         if user:
-#             login(request, user)
-#             print(f"User {user} logged in with session key: {request.session.session_key}")
-            
-#             # Debug active sessions
-#             sessions = Session.objects.all()
-#             print(f"Active sessions: {[session.session_key for session in sessions]}")
-
-#             return Response({'Success': 'Login successful'}, status=200)
-
-#         return Response({'error': 'Invalid credentials'}, status=401)
+                            status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class LoginView(APIView):
     def post(self, request):
