@@ -34,3 +34,19 @@
     font-size: 25px;
     margin-left: 3%;
 }
+.logout-button {
+    text-decoration: none;
+    width: 120px;  
+    height: 40px;  
+    background-color: red;
+    display: flex;
+    justify-content: center;
+    align-items: center;  
+    color: white;
+    border-radius: 10px;
+    margin-top: 5%;  
+    cursor: pointer; 
+}
+.logout-button:hover {
+    background-color: rgba(151, 0, 0, 0.932);
+}

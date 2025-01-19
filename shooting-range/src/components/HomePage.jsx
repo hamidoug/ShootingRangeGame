@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import "../scss/HomePage.scss";
 import { Link } from 'react-router-dom';
 
+
 function HomePage() {
     return (
         <div className="home-page">

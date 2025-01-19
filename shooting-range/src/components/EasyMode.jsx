@@ -5,46 +5,10 @@ import "../scss/EasyMode.scss"
 import axios from "axios";
 import { useState, useEffect, useRef } from "react";
 import { toHaveFormValues } from "@testing-library/jest-dom/matchers";
+import CSRFToken from "./CSRFToken";
+import Cookies from "js-cookie";
 
 axios.defaults.withCredentials = true;
-// function getCookie(name) {
-//     let cookieValue = null;
-//     if (document.cookie && document.cookie !== '') {
-//         const cookies = document.cookie.split(';');
-//         for (let i = 0; i < cookies.length; i++) {
-//             const cookie = cookies[i].trim();
-//             // Does this cookie string begin with the name we want?
-//             if (cookie.substring(0, name.length + 1) === (name + '=')) {
-//                 cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-//                 break;
-//             }
-//         }
-//     }
-//     return cookieValue;
-// }
-// const csrftoken = getCookie('csrftoken');
-
-// axios.defaults.headers.common['X-CSRFToken'] = csrftoken;
-
-function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
-}
-
-// Set the CSRF token in axios headers globally
-const csrftoken = getCookie('csrftoken');
-console.log("CSRF Token:", csrftoken);
-axios.defaults.headers.common['X-CSRFToken'] = csrftoken;
 
 function EasyMode() {
     //add accuracy of the shot (how close to the center is it)
@@ -77,41 +41,31 @@ function EasyMode() {
         navigate('/userhomepage');
     };
 
-    // const updateHighScoreAfterGame = async (finalScore) => {
-    //     try {
-    //         await axios.post(
-    //             'http://127.0.0.1:8000/user_auth/updatehighscore/',
-    //             {
-    //                 game_score: finalScore,
-    //                 game_difficulty: 'Easy',
-    //             },
-    //             {
-    //                 headers: {
-    //                     'X-CSRFToken': csrftoken, 
-    //                 },
-    //                 withCredentials: true, 
-    //             }
-    //         );
-    //     } catch (e) {
-    //         if (e.response && e.response.data && e.response.data.error) {
-    //             console.error(e.response.data.error);
-    //         } else {
-    //             console.error('An unexpected error occurred');
-    //         }
-    //     }
-    // };
     const updateHighScoreAfterGame = async (finalScore) => {
         try {
-            const params = new URLSearchParams({
-                game_score: finalScore,
-                game_difficulty: 'Easy',
-            });
-            await axios.get(`http://127.0.0.1:8000/user_auth/updatehighscore/?${params.toString()}`, {
-                withCredentials: true,
-            });
-            console.log("High score updated successfully.");
+            const csrfToken = Cookies.get('csrftoken'); 
+            console.log('CSRF Token:', csrfToken); 
+    
+            await axios.put(
+                'http://127.0.0.1:8000/user_auth/update_user_profile',
+                {
+                    easy_high_score: finalScore, 
+                    medium_high_score: 0, 
+                    hard_high_score: 0,
+                },
+                {
+                    headers: {
+                        'X-CSRFToken': csrfToken,
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+                    withCredentials: true,
+                }
+            );
+    
+            console.log('Successfully updated high score.');
         } catch (e) {
-            console.error("Error updating high score:", e.response?.data || e.message);
+            console.error('Error updating high score:', e.response?.data || e.message);
         }
     };
     
@@ -255,8 +209,8 @@ function EasyMode() {
                 <h3>Targets hit: {totalTargetsHit}</h3>
                         <h3>Overall Score: {score}</h3>
                 </div>
+        <button className="login-button" onClick={ handleGoToUserHomePage}>Go To Home Page</button> 
                 </div>
-        <button onClick={ handleGoToUserHomePage}>Go To Home Page</button> 
             </div>
         )}
         </div>
